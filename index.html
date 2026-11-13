@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Payment & Receipt</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-5">
+
+    <!-- PAYMENT PAGE -->
+    <div id="paymentPage" class="text-center space-y-4">
+
+        <h2 class="text-2xl font-extrabold text-slate-900">
+            Verify & Pay
+        </h2>
+
+        <p class="text-xs font-bold text-slate-600">
+            Scan UPI QR Code and submit UTR reference
+        </p>
+
+        <div class="inline-block bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
+            <div class="w-44 h-44 bg-gray-50 border rounded-xl overflow-hidden mx-auto">
+                <img src="qr.png"
+                     alt="UPI Payment QR Code"
+                     class="w-full h-full object-contain"
+                     onerror="this.alt='QR image unavailable';">
+            </div>
+
+            <p class="text-xs font-bold text-slate-600 mt-3">
+                Ref ID:
+                <span id="paymentRef" class="text-slate-900">HSR-839210</span>
+            </p>
+        </div>
+
+        <div class="text-left space-y-3">
+
+            <label class="block text-xs font-bold uppercase text-slate-800">
+                UTR / Transaction Reference Number*
+            </label>
+
+            <input type="text"
+                   id="utrInput"
+                   maxlength="12"
+                   inputmode="numeric"
+                   placeholder="Enter 12-digit UTR No."
+                   class="w-full border border-slate-300 rounded-lg p-3 text-sm font-bold outline-none focus:border-blue-600">
+
+            <p id="errorMessage" class="text-xs text-red-600 hidden"></p>
+
+            <button onclick="verifyPayment()"
+                    id="verifyBtn"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm">
+                Submit UTR
+            </button>
+
+            <button onclick="submitBooking()"
+                    id="confirmBtn"
+                    class="hidden w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm">
+                Confirm & Submit
+            </button>
+
+            <p class="text-xs text-slate-500 text-center">
+                UTR submission is subject to payment verification.
+            </p>
+
+        </div>
+    </div>
+
+
+    <!-- RECEIPT PAGE -->
+    <div id="receiptPage" class="hidden space-y-5">
+
+        <div class="text-center">
+
+            <div class="w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                ✓
+            </div>
+
+            <h2 class="text-xl font-extrabold text-slate-900">
+                UTR Submitted Successfully!
+            </h2>
+
+            <p class="text-xs font-bold text-slate-500 mt-1">
+                Your payment details have been submitted for verification.
+            </p>
+
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4 space-y-3">
+
+            <div class="flex justify-between border-b pb-3">
+                <span class="text-xs font-bold text-slate-500">
+                    PAYMENT RECEIPT
+                </span>
+            </div>
+
+            <div class="flex justify-between gap-2 text-xs">
+                <span class="text-slate-500 font-bold">Registration No:</span>
+                <span id="receiptReg" class="font-extrabold text-slate-900">--</span>
+            </div>
+
+            <div class="flex justify-between gap-2 text-xs">
+                <span class="text-slate-500 font-bold">Reference ID:</span>
+                <span id="receiptRef" class="font-extrabold text-slate-900">--</span>
+            </div>
+
+            <div class="flex justify-between gap-2 text-xs">
+                <span class="text-slate-500 font-bold">UTR Transaction ID:</span>
+                <span id="receiptUtr" class="font-bold text-slate-800">--</span>
+            </div>
+
+            <div class="flex justify-between gap-2 text-xs">
+                <span class="text-slate-500 font-bold">Submission Date:</span>
+                <span id="receiptDate" class="font-bold text-slate-800">--</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let paymentReference = "HSR-839210";
+let registrationNumber = "DL01AB1234";
+let submittedUTR = "";
+
+function verifyPayment() {
+
+    const utr = document.getElementById("utrInput").value.trim();
+    const error = document.getElementById("errorMessage");
+
+    if (!/^\d{12}$/.test(utr)) {
+        error.innerText = "Please enter a valid 12-digit UTR number.";
+        error.classList.remove("hidden");
+        return;
+    }
+
+    error.classList.add("hidden");
+    submittedUTR = utr;
+
+    document.getElementById("verifyBtn").classList.add("hidden");
+    document.getElementById("confirmBtn").classList.remove("hidden");
+}
+
+function submitBooking() {
+
+    if (!submittedUTR) return;
+
+    document.getElementById("receiptReg").innerText = registrationNumber;
+    document.getElementById("receiptRef").innerText = paymentReference;
+    document.getElementById("receiptUtr").innerText = submittedUTR;
+
+    document.getElementById("receiptDate").innerText =
+        new Date().toLocaleString("en-IN");
+
+    document.getElementById("paymentPage").classList.add("hidden");
+    document.getElementById("receiptPage").classList.remove("hidden");
+
+}
+
+</script>
+
+</body>
+</html>
